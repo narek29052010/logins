@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .form-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-title p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 50px 15px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input.valid {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .form-input.invalid {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-icon.valid {
+            color: #10b981;
+        }
+
+        .input-icon.invalid {
+            color: #ef4444;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .error-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .success-message {
+            color: #10b981;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .success-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b7280;
+            font-size: 1rem;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-password:hover {
+            color: #374151;
+            background: #f3f4f6;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #374151;
+            transition: color 0.3s ease;
+        }
+
+        .remember-me:hover {
+            color: #667eea;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #5048e5;
+            text-decoration: underline;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .submit-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-button:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .login-attempts {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: #92400e;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .login-attempts.show {
+            display: flex;
+        }
+
+        .login-attempts.blocked {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .social-login {
+            border-top: 1px solid #e1e5e9;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .social-login p {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .social-button {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: white;
+            color: #374151;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .social-button:hover {
+            border-color: #667eea;
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .form-footer p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .form-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-options {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .social-buttons {
+                flex-direction: column;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .demo-credentials {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: #0c4a6e;
+        }
+
+        .demo-credentials h4 {
+            margin-bottom: 8px;
+            color: #0369a1;
+        }
+
+        .demo-credentials p {
+            margin-bottom: 5px;
+        }
+
+        .demo-credentials button {
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .demo-credentials button:hover {
+            background: #0284c7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-title">
+            <h1>Вход</h1>
+            <p>Добро пожаловать обратно!</p>
+        </div>
+
+        <div class="demo-credentials">
+            <h4>🔧 Демо-данные для тестирования:</h4>
+            <p><strong>Email:</strong> demo@example.com</p>
+            <p><strong>Пароль:</strong> Demo123!</p>
+            <button onclick="fillDemoData()">Заполнить демо-данные</button>
+        </div>
+
+        <div class="login-attempts" id="loginAttempts">
+            <span>⚠️</span>
+            <span id="attemptsText"></span>
+        </div>
+
+        <form id="loginForm" novalidate>
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" name="email" class="form-input" placeholder="Введите ваш email">
+                    <div class="input-icon" id="emailIcon"></div>
+                </div>
+                <div class="error-message" id="emailError"></div>
+                <div class="success-message" id="emailSuccess"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Пароль</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" class="form-input" placeholder="Введите ваш пароль">
+                    <button type="button" class="toggle-password" id="togglePassword">👁️</button>
+                    <div class="input-icon" id="passwordIcon"></div>
+                </div>
+                <div class="error-message" id="passwordError"></div>
+                <div class="success-message" id="passwordSuccess"></div>
+            </div>
+
+            <div class="form-options">
+                <label class="remember-me">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <span>Запомнить меня</span>
+                </label>
+                <a href="#" class="forgot-password">Забыли пароль?</a>
+            </div>
+
+            <button type="submit" class="submit-button" id="submitButton" disabled>
+                Войти
+            </button>
+        </form>
+
+        <div class="social-login">
+            <p>Или войдите через</p>
+            <div class="social-buttons">
+                <a href="#" class="social-button">
+                    <span>📱</span>
+                    <span>Google</span>
+                </a>
+                <a href="#" class="social-button">
+                    <span>🔷</span>
+                    <span>Facebook</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <p>Нет аккаунта? <a href="#">Зарегистрироваться</a></p>
+        </div>
+    </div>
+
+    <script>
+        class LoginValidator {
+            constructor() {
+                this.form = document.getElementById('loginForm');
+                this.fields = {
+                    email: document.getElementById('email'),
+                    password: document.getElementById('password')
+                };
+                this.submitButton = document.getElementById('submitButton');
+                this.validationState = {
+                    email: false,
+                    password: false
+                };
+                this.loginAttempts = 0;
+                this.maxAttempts = 3;
+                this.isBlocked = false;
+                this.blockTime = 30000; // 30 секунд блокировки
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setupPasswordToggle();
+                this.loadRememberedCredentials();
+            }
+
+            setupEventListeners() {
+                // Валидация в реальном времени
+                this.fields.email.addEventListener('input', () => this.validateEmail());
+                this.fields.email.addEventListener('blur', () => this.validateEmail());
+                
+                this.fields.password.addEventListener('input', () => this.validatePassword());
+                this.fields.password.addEventListener('blur', () => this.validatePassword());
+
+                // Отправка формы
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+            }
+
+            setupPasswordToggle() {
+                document.getElementById('togglePassword').addEventListener('click', () => {
+                    this.togglePasswordVisibility('password', 'togglePassword');
+                });
+            }
+
+            togglePasswordVisibility(fieldId, buttonId) {
+                const field = document.getElementById(fieldId);
+                const button = document.getElementById(buttonId);
+                
+                if (field.type === 'password') {
+                    field.type = 'text';
+                    button.textContent = '🙈';
+                } else {
+                    field.type = 'password';
+                    button.textContent = '👁️';
+                }
+            }
+
+            validateEmail() {
+                const email = this.fields.email.value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!email) {
+                    this.showError('email', '⚠️ Email обязателен для заполнения');
+                    return false;
+                }
+                
+                if (!emailRegex.test(email)) {
+                    this.showError('email', '⚠️ Введите корректный email адрес');
+                    return false;
+                }
+                
+                this.showSuccess('email', '✅ Email адрес корректен');
+                return true;
+            }
+
+            validatePassword() {
+                const password = this.fields.password.value;
+                
+                if (!password) {
+                    this.showError('password', '⚠️ Пароль обязателен');
+                    return false;
+                }
+                
+                if (password.length < 6) {
+                    this.showError('password', '⚠️ Пароль должен содержать минимум 6 символов');
+                    return false;
+                }
+                
+                this.showSuccess('password', '✅ Пароль введен');
+                return true;
+            }
+
+            showError(field, message) {
+                const input = this.fields[field];
+                const icon = document.getElementById(field + 'Icon');
+                const errorElement = document.getElementById(field + 'Error');
+                const successElement = document.getElementById(field + 'Success');
+                
+                input.classList.remove('valid');
+                input.classList.add('invalid');
+                icon.textContent = '❌';
+                icon.classList.remove('valid');
+                icon.classList.add('invalid');
+                
+                errorElement.textContent = message;
+                errorElement.classList.add('show');
+                successElement.classList.remove('show');
+                
+                this.validationState[field] = false;
+                this.updateSubmitButton();
+            }
+
+            showSuccess(field, message) {
+                const input = this.fields[field];
+                const icon = document.getElementById(field + 'Icon');
+                const errorElement = document.getElementById(field + 'Error');
+                const successElement = document.getElementById(field + 'Success');
+                
+                input.classList.remove('invalid');
+                input.classList.add('valid');
+                icon.textContent = '✅';
+                icon.classList.remove('invalid');
+                icon.classList.add('valid');
+                
+                successElement.textContent = message;
+                successElement.classList.add('show');
+                errorElement.classList.remove('show');
+                
+                this.validationState[field] = true;
+                this.updateSubmitButton();
+            }
+
+            updateSubmitButton() {
+                const allValid = Object.values(this.validationState).every(state => state);
+                this.submitButton.disabled = !allValid || this.isBlocked;
+            }
+
+            showLoginAttempts() {
+                const attemptsElement = document.getElementById('loginAttempts');
+                const attemptsText = document.getElementById('attemptsText');
+                
+                if (this.isBlocked) {
+                    attemptsElement.classList.add('blocked');
+                    attemptsText.textContent = 'Слишком много неудачных попыток. Попробуйте через 30 секунд.';
+                } else {
+                    attemptsElement.classList.remove('blocked');
+                    const remaining = this.maxAttempts - this.loginAttempts;
+                    attemptsText.textContent = `Неверные данные. Осталось попыток: ${remaining}`;
+                }
+                
+                attemptsElement.classList.add('show');
+            }
+
+            blockLogin() {
+                this.isBlocked = true;
+                this.updateSubmitButton();
+                this.showLoginAttempts();
+                
+                setTimeout(() => {
+                    this.isBlocked = false;
+                    this.loginAttempts = 0;
+                    document.getElementById('loginAttempts').classList.remove('show');
+                    this.updateSubmitButton();
+                }, this.blockTime);
+            }
+
+            saveCredentials(email, password) {
+                if (document.getElementById('rememberMe').checked) {
+                    localStorage.setItem('rememberedEmail', email);
+                    // В реальном приложении НЕ сохраняйте пароли!
+                    // Это только для демонстрации
+                }
+            }
+
+            loadRememberedCredentials() {
+                const rememberedEmail = localStorage.getItem('rememberedEmail');
+                if (rememberedEmail) {
+                    this.fields.email.value = rememberedEmail;
+                    document.getElementById('rememberMe').checked = true;
+                    this.validateEmail();
+                }
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+                
+                if (this.isBlocked) {
+                    return;
+                }
+
+                // Финальная валидация
+                const isEmailValid = this.validateEmail();
+                const isPasswordValid = this.validatePassword();
+                
+                if (!isEmailValid || !isPasswordValid) {
+                    return;
+                }
+
+                // Показываем загрузку
+                const originalText = this.submitButton.innerHTML;
+                this.submitButton.innerHTML = '<div class="loading"></div> Вход...';
+                this.submitButton.disabled = true;
+
+                try {
+                    // Имитация проверки на сервере
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    const email = this.fields.email.value;
+                    const password = this.fields.password.value;
+                    
+                    // Проверка демо-данных
+                    const isValidLogin = (email === 'demo@example.com' && password === 'Demo123!');
+                    
+                    if (isValidLogin) {
+                        // Успешный вход
+                        this.submitButton.innerHTML = '✅ Вход выполнен!';
+                        this.submitButton.style.background = '#10b981';
+                        
+                        // Сохраняем данные если нужно
+                        this.saveCredentials(email, password);
+                        
+                        // Перенаправление
+                        setTimeout(() => {
+                            alert('Добро пожаловать! Вход выполнен успешно.');
+                            // В реальном приложении здесь будет редирект
+                            // window.location.href = '/dashboard';
+                        }, 1000);
+                        
+                    } else {
+                        // Неверные данные
+                        this.loginAttempts++;
+                        
+                        if (this.loginAttempts >= this.maxAttempts) {
+                            this.blockLogin();
+                        } else {
+                            this.showLoginAttempts();
+                        }
+                        
+                        this.submitButton.innerHTML = '❌ Неверные данные';
+                        this.submitButton.style.background = '#ef4444';
+                        
+                        // Сброс полей
+                        this.fields.password.value = '';
+                        this.fields.password.classList.remove('valid');
+                        document.getElementById('passwordIcon').textContent = '';
+                        document.getElementById('passwordSuccess').classList.remove('show');
+                        this.validationState.password = false;
+                        
+                        setTimeout(() => {
+                            this.submitButton.innerHTML = originalText;
+                            this.submitButton.style.background = '';
+                            this.updateSubmitButton();
+                        }, 3000);
+                    }
+                    
+                } catch (error) {
+                    // Ошибка сервера
+                    this.submitButton.innerHTML = '❌ Ошибка сервера';
+                    this.submitButton.style.background = '#ef4444';
+                    
+                    setTimeout(() => {
+                        this.submitButton.innerHTML = originalText;
+                        this.submitButton.style.background = '';
+                        this.updateSubmitButton();
+                    }, 3000);
+                }
+            }
+        }
+
+        // Функция для заполнения демо-данных
+        function fillDemoData() {
+            document.getElementById('email').value = 'demo@example.com';
+            document.getElementById('password').value = 'Demo123!';
+            
+            // Запускаем валидацию
+            const validator = window.loginValidator;
+            if (validator) {
+                validator.validateEmail();
+                validator.validatePassword();
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            window.loginValidator = new LoginValidator();
+        });
+    </script>
+</body>
+</html>
